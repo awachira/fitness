@@ -1,3 +1,15 @@
-<p>
-  login works!
-</p>
+<section class="login-form">
+  <form [formGroup]="loginForm" fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="10px" (ngSubmit)="onSubmit()" novalidate>
+    <mat-form-field>
+      <input formControlName="email" type="email" matInput placeholder="Your email" required>
+      <mat-error *ngIf="email.hasError('required')">Field must not be empty.</mat-error>
+      <mat-error *ngIf="email.invalid">E-Mail is invalid.</mat-error>
+    </mat-form-field>
+    <mat-form-field hintLabel="Should be at least 6 characters long.">
+      <input formControlName="password" type="password" matInput placeholder="Your password" required>
+      <mat-hint align="end">{{password.value.length}} / 6</mat-hint>
+      <mat-error *ngIf="password.invalid">Has to be at least 6 characters long.</mat-error>
+    </mat-form-field>
+    <button type="submit" mat-raised-button color="primary" [disabled]="loginForm.invalid">Submit</button>
+  </form>
+</section>
