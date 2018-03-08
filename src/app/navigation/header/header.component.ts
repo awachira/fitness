@@ -17,7 +17,7 @@ import { Subscription} from 'rxjs/Subscription';
         <li *ngIf="!isAuth"><a routerLink="/signup">Signup</a></li>
         <li *ngIf="!isAuth"><a routerLink="/login">Login</a></li>
         <li *ngIf="isAuth"><a routerLink="/training">Training</a></li>
-        <li *ngIf="isAuth"><a>Logout</a></li>
+        <li *ngIf="isAuth"><a style="cursor: pointer" (click)="onLogout()">Logout</a></li>
       </ul>
     </div>
   </mat-toolbar>
@@ -27,20 +27,6 @@ import { Subscription} from 'rxjs/Subscription';
 export class HeaderComponent implements OnInit, OnDestroy {
   isAuth = false;
   authSubscription: Subscription;
-
-  navItems = [
-    { link: '/signup',
-      name: 'Sign Up',
-      show: () => !this.isAuth },
-    { link: '/login',
-      name: 'Login',
-      show: () => !this.isAuth },
-    { link: '/training',
-      name: 'Training',
-      show: () => this.isAuth },
-    { name: 'Logout',
-      show: () => this.isAuth }
-  ];
 
   @Output() sidenavToggle = new EventEmitter<void>();
 
@@ -54,6 +40,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         authStatus => this.isAuth = authStatus );
   }
 
+  onLogout() { this.authService.logout(); }
   ngOnDestroy() { this.authSubscription.unsubscribe(); }
 
   onToggleSidenav(): void {

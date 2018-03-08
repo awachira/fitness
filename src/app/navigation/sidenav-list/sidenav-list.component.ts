@@ -31,7 +31,7 @@ interface INavList {
         <span class="nav-caption">Training</span>
       </a>
       <mat-list-item>
-        <button mat-icon-button (click)="onClose()" *ngIf="isAuth">
+        <button mat-icon-button (click)="onLogout()" *ngIf="isAuth">
           <mat-icon>eject</mat-icon>
           <span class="nav-caption">Logout</span>
         </button>
@@ -44,8 +44,6 @@ export class SidenavListComponent implements OnInit, OnDestroy {
   isAuth = false;
   subScribed: Subscription;
 
-  navListNA: Array<INavList>;
-  navListA: Array<INavList>;
 
   @Output() closeSidenav = new EventEmitter<void>();
 
@@ -56,17 +54,12 @@ export class SidenavListComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.subScribed = this.authService.authChange
       .subscribe(authStatus => this.isAuth = authStatus);
-
-    this.navListNA = [
-      {link: '/signup', name: 'Signup', icon: 'face'},
-      {link: '/login', name: 'Login', icon: 'input'}
-    ];
-
-    this.navListA = [
-      {link: '/training', name: 'Training', icon: 'fitness_center'}
-    ];
   }
 
   ngOnDestroy() { this.subScribed.unsubscribe(); }
   onClose() { this.closeSidenav.emit(); }
+  onLogout() {
+    this.onClose();
+    this.authService.logout();
+  }
 }
