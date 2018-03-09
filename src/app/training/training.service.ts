@@ -32,7 +32,7 @@ export class TrainingService {
       duration: this.activeExercise.duration * (progress / 100),
       calories: this.activeExercise.calories * (progress / 100 ),
       date: new Date(),
-      state: 'completed'});
+      state: 'cancelled'});
     this.activeExercise = null;
     this.exerciseChanged.next(null);
   }
@@ -42,5 +42,8 @@ export class TrainingService {
   }
   getExercises(): Observable<Exercise> {
     return Observable.from(this.availableExercises);
+  }
+  getAllExercises(): Array<Exercise> {
+    return this.exercises.slice();
   }
 }
