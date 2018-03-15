@@ -5,12 +5,15 @@ import { Exercise } from './exercise.model';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/from';
 import { Subject } from 'rxjs/Subject';
+import { Subscription } from 'rxjs/Subscription';
 
 @Injectable()
 export class TrainingService {
   exerciseChanged = new Subject<Exercise>();
   exercisesChanged = new Subject<Array<Exercise>>();
   finishedExercisesChanged = new Subject<Array<Exercise>>();
+
+  private fireSubs = new Array<Subscription>();
 
   private availableExercises: Array<Exercise>;
   private activeExercise: Exercise;
@@ -41,6 +44,7 @@ export class TrainingService {
   }
 
   fetchActiveExercise(): void {
+    this.fireSubs.push(
     this.fireDB
       .collection('availableExercises')
       .snapshotChanges()
@@ -57,7 +61,8 @@ export class TrainingService {
       .subscribe((exercises: Array<Exercise>) => {
         this.availableExercises = exercises;
         this.exercisesChanged.next([...this.availableExercises]);
-      });
+      })
+    );
   }
 
   getActiveExercise(): Exercise {
@@ -67,16 +72,22 @@ export class TrainingService {
     return Observable.from(this.availableExercises);
   }
   fetchAllExercises(): void {
+    this.fireSubs.push(
     this.fireDB.collection('finishedExercises')
       .valueChanges()
       .subscribe(
         (exercises: Array<Exercise>) => {
           this.finishedExercisesChanged.next(exercises);
-        });
+        })
+    );
   }
 
   private addDataToDatabase(exercise: Exercise) {
     this.fireDB.collection('finishedExercises')
       .add(exercise);
+  }
+
+  cancelFireSubscriptions() {
+    this.fireSubs.forEach(sub => sub.unsubscribe());
   }
 }
