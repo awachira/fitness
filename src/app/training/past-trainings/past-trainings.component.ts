@@ -5,6 +5,7 @@ import { Exercise } from '../exercise.model';
 import { TrainingService } from '../training.service';
 
 import { Subscription } from 'rxjs/Subscription';
+import { UIEventsService } from '../../services/uievents.service';
 
 @Component({
   selector: 'app-past-trainings',
@@ -17,15 +18,22 @@ export class PastTrainingsComponent
     'date', 'name', 'duration', 'calories', 'state'];
   dataSource = new MatTableDataSource<Exercise>();
   private exercisesChangedSub: Subscription;
+  isLoading = false;
+  private dataLoadingSub: Subscription;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(
-    private trainingService: TrainingService
+    private trainingService: TrainingService,
+    private uiService: UIEventsService
   ) { }
 
   ngOnInit() {
+    this.dataLoadingSub = this.uiService
+      .dataLoadingStateChanged
+      .subscribe(isLoading => this.isLoading = isLoading);
+
     this.exercisesChangedSub = this.trainingService
       .finishedExercisesChanged
       .subscribe((exercises: Array<Exercise>) => {
@@ -40,6 +48,7 @@ export class PastTrainingsComponent
   }
 
   ngOnDestroy() {
+    this.dataLoadingSub.unsubscribe();
     this.exercisesChangedSub.unsubscribe();
   }
   /**

@@ -8,6 +8,7 @@ import { map } from 'rxjs/operators';
 import { TrainingService } from '../training.service';
 
 import { Exercise } from '../exercise.model';
+import { UIEventsService } from '../../services/uievents.service';
 
 @Component({
   selector: 'app-new-training',
@@ -17,19 +18,29 @@ import { Exercise } from '../exercise.model';
 export class NewTrainingComponent implements OnInit, OnDestroy {
   trainings: Array<Exercise>;
   exercisesSubscription: Subscription;
+  isLoading = false;
+  private dataLoadingSub: Subscription;
 
   constructor(
-    private trainingService: TrainingService
+    private trainingService: TrainingService,
+    private uiService: UIEventsService
   ) { }
 
   ngOnInit() {
+    this.dataLoadingSub = this.uiService
+      .dataLoadingStateChanged
+      .subscribe(isLoading => this.isLoading = isLoading);
     this.exercisesSubscription = this.trainingService.exercisesChanged
-      .subscribe(exercises => this.trainings = exercises);
+      .subscribe(exercises => {
+        this.trainings = exercises;
+        this.isLoading = true;
+      });
     this.trainingService.fetchActiveExercise();
   }
 
   ngOnDestroy() {
     this.exercisesSubscription.unsubscribe();
+    this.dataLoadingSub.unsubscribe();
   }
 
   onStartTraining(form: NgForm) {

@@ -22,8 +22,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { HeaderComponent } from './navigation/header/header.component';
 import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
 import { StopTrainingComponent } from './training/current-training/stop-training.component';
+
 import { AuthService } from './auth/auth.service';
 import { TrainingService } from './training/training.service';
+import { UIEventsService } from './services/uievents.service';
 
 @NgModule({
   declarations: [
@@ -51,7 +53,7 @@ import { TrainingService } from './training/training.service';
     AngularFirestoreModule,
     AngularFireAuthModule
   ],
-  providers: [AuthService, TrainingService],
+  providers: [AuthService, TrainingService, UIEventsService],
   bootstrap: [AppComponent],
   entryComponents: [StopTrainingComponent]
 })
