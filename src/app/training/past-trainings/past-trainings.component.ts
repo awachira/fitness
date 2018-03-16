@@ -48,8 +48,12 @@ export class PastTrainingsComponent
   }
 
   ngOnDestroy() {
-    this.dataLoadingSub.unsubscribe();
-    this.exercisesChangedSub.unsubscribe();
+    if (this.exercisesChangedSub) {
+      this.exercisesChangedSub.unsubscribe();
+    }
+    if (this.dataLoadingSub) {
+      this.dataLoadingSub.unsubscribe();
+    }
   }
   /**
    *
