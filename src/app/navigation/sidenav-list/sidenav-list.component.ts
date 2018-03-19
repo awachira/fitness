@@ -1,9 +1,9 @@
-import { Component, OnInit, EventEmitter, Output, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs/Observable';
 
 import { AuthService } from '../../auth/auth.service';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
+import * as fromRoot from '../../app.reducer';
 
 interface INavList {
   link: string;
@@ -16,22 +16,22 @@ interface INavList {
   template: `
     <mat-nav-list>
       <a mat-list-item routerLink="/signup"
-      (click)="onClose()" *ngIf="!isAuth">
+      (click)="onClose()" *ngIf="!(isAuth$ | async)">
         <mat-icon>face</mat-icon>
         <span class="nav-caption">Signup</span>
       </a>
       <a mat-list-item routerLink="/login"
-      (click)="onClose()" *ngIf="!isAuth">
+      (click)="onClose()" *ngIf="!(isAuth$ | async)">
         <mat-icon>input</mat-icon>
         <span class="nav-caption">Login</span>
       </a>
       <a mat-list-item routerLink="/training"
-      (click)="onClose()" *ngIf="isAuth">
+      (click)="onClose()" *ngIf="(isAuth$ | async)">
         <mat-icon>fitness_center</mat-icon>
         <span class="nav-caption">Training</span>
       </a>
       <mat-list-item>
-        <button mat-icon-button (click)="onLogout()" *ngIf="isAuth">
+        <button mat-icon-button (click)="onLogout()" *ngIf="isAuth$ | async">
           <mat-icon>eject</mat-icon>
           <span class="nav-caption">Logout</span>
         </button>
@@ -40,25 +40,20 @@ interface INavList {
   `,
   styleUrls: ['./sidenav-list.component.css']
 })
-export class SidenavListComponent implements OnInit, OnDestroy {
-  isAuth = false;
-  subScribed: Subscription;
-
+export class SidenavListComponent implements OnInit {
+  isAuth$: Observable<boolean>;
 
   @Output() closeSidenav = new EventEmitter<void>();
 
   constructor(
-    private authService: AuthService
+    private authService: AuthService,
+    private store: Store<fromRoot.State>
   ) {}
 
   ngOnInit() {
-    this.subScribed = this.authService.authChange
-      .subscribe(authStatus => this.isAuth = authStatus);
+    this.isAuth$ = this.store.select(fromRoot.getIsAuthenticated);
   }
 
-  ngOnDestroy() {
-    if (this.subScribed) { this.subScribed.unsubscribe();  }
-  }
   onClose() { this.closeSidenav.emit(); }
   onLogout() {
     this.onClose();

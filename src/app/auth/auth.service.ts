@@ -2,11 +2,10 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from 'angularfire2/auth';
 
-import { Subject } from 'rxjs/Subject';
-
 import { Store } from '@ngrx/store';
 import * as fromRoot from '../app.reducer';
 import * as UI from '../shared/ui.actions';
+import * as Auth from './auth.actions';
 
 import { User } from './user.model';
 import { AuthData } from './auth-data.model';
@@ -17,8 +16,8 @@ import { UIEventsService } from '../services/uievents.service';
 
 @Injectable() // to inject a servcice into another this is required.
 export class AuthService {
-  authChange = new Subject<boolean>();
-  private isAuthenticated = false;
+  // authChange = new Subject<boolean>();
+  // private isAuthenticated = false;
 
   constructor(
     private router: Router,
@@ -32,14 +31,16 @@ export class AuthService {
     this.afAuth.authState
       .subscribe(user => {
         if (user) {
-          this.isAuthenticated = true;
-          this.authChange.next(true);
+          this.store.dispatch(new Auth.SetAuthenticated());
+          // this.isAuthenticated = true;
+          // this.authChange.next(true);
           this.router.navigate(['/training']);
         } else {
+          // this.authChange.next(false);
+          // this.isAuthenticated = false;
+          this.store.dispatch(new Auth.SetUnauthenticated());
           this.trainingSrvc.cancelFireSubscriptions();
-          this.authChange.next(false);
           this.router.navigate(['/login']);
-          this.isAuthenticated = false;
         }
       });
   }
@@ -84,5 +85,5 @@ export class AuthService {
     this.afAuth.auth.signOut();
   }
 
-  isAuth(): boolean { return this.isAuthenticated; }
+  // isAuth(): boolean { return this.isAuthenticated; }
 }
