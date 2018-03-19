@@ -10,7 +10,7 @@
       <mat-hint align="end">{{password.value.length}} / 6</mat-hint>
       <mat-error *ngIf="password.invalid">Has to be at least 6 characters long.</mat-error>
     </mat-form-field>
-    <button *ngIf="!isLoading" type="submit" mat-raised-button color="primary" [disabled]="loginForm.invalid">Submit</button>
-    <mat-progress-spinner mode="indeterminate" *ngIf="isLoading"></mat-progress-spinner>
+    <button *ngIf="!(isLoading$ | async)" type="submit" mat-raised-button color="primary" [disabled]="loginForm.invalid">Submit</button>
+    <mat-progress-spinner mode="indeterminate" *ngIf="isLoading$ | async"></mat-progress-spinner>
   </form>
 </section>

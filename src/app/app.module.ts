@@ -9,6 +9,9 @@ import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { AuthModule } from './auth/auth.module';
 import { environment } from '../environments/environment';
 
+import { StoreModule } from '@ngrx/store';
+import { reducers } from './app.reducer';
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
@@ -35,7 +38,8 @@ import { UIEventsService } from './services/uievents.service';
     FlexLayoutModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
-    AuthModule
+    AuthModule,
+    StoreModule.forRoot(reducers)
   ],
   providers: [AuthService, TrainingService, UIEventsService],
   bootstrap: [AppComponent]

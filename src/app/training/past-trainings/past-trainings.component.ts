@@ -18,8 +18,6 @@ export class PastTrainingsComponent
     'date', 'name', 'duration', 'calories', 'state'];
   dataSource = new MatTableDataSource<Exercise>();
   private exercisesChangedSub: Subscription;
-  isLoading = false;
-  private dataLoadingSub: Subscription;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -30,10 +28,6 @@ export class PastTrainingsComponent
   ) { }
 
   ngOnInit() {
-    this.dataLoadingSub = this.uiService
-      .dataLoadingStateChanged
-      .subscribe(isLoading => this.isLoading = isLoading);
-
     this.exercisesChangedSub = this.trainingService
       .finishedExercisesChanged
       .subscribe((exercises: Array<Exercise>) => {
@@ -50,9 +44,6 @@ export class PastTrainingsComponent
   ngOnDestroy() {
     if (this.exercisesChangedSub) {
       this.exercisesChangedSub.unsubscribe();
-    }
-    if (this.dataLoadingSub) {
-      this.dataLoadingSub.unsubscribe();
     }
   }
   /**
