@@ -4,7 +4,8 @@ import {
   SetAuthenticated,
   SetUnauthenticated,
   SET_AUTHENTICATED,
-  SET_UNAUTHENTICATED
+  SET_UNAUTHENTICATED,
+  AuthActions
 } from './auth.actions';
 
 export interface State {
